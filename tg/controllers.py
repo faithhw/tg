@@ -1,4 +1,5 @@
 import logging
+import glob
 import os
 import shlex
 from datetime import datetime
@@ -319,7 +320,7 @@ class Controller:
             return
         self.tg.send_chat_action(chat_id, ChatAction.chatActionTyping)
         if msg := self.view.status.get_input():
-            self.model.send_message(text=msg)
+            self.model.send_message(text=msg)            
             self.present_info("Message sent")
         else:
             self.tg.send_chat_action(chat_id, ChatAction.chatActionCancel)
@@ -396,7 +397,7 @@ class Controller:
         self.send_file(self.tg.send_doc)
 
     @bind(msg_handler, ["sp"])
-    def send_picture(self) -> None:
+    def send_picture(self) -> None:        
         """Enter file path and send compressed image"""
         self.send_file(self.tg.send_photo)
 
@@ -420,6 +421,36 @@ class Controller:
         if not chat_id:
             return
         self._send_video(file_path, chat_id)
+    
+    @bind(msg_handler, ["ss"])
+    def send_last_screen_short(self) -> None:
+        """Send last screenshot stored on ~/Screenshot"""
+        chat_id = self.model.chats.id_by_index(self.model.current_chat)
+
+        list_of_files = glob.glob('/Users/hung/Screenshot/*.*')
+        file_path = max(list_of_files, key=os.path.getctime)
+        self.present_info("Send last screenshot" + file_path)
+        mime_map = {
+            "animation": self.tg.send_animation,
+            "image": self.tg.send_photo,
+            "audio": self.tg.send_audio,
+            "video": self._send_video,
+        }
+
+        mime = get_mime(file_path)
+        if mime in ("image", "video", "animation"):
+            resp = self.view.status.get_input(
+                f"Upload <{file_path}> compressed?[Y/n]"
+            )
+            self.render_status()
+            if resp is None:
+                return self.present_info("Uploading cancelled")
+            if not is_yes(resp):
+                mime = ""
+
+        fun = mime_map.get(mime, self.tg.send_doc)
+        fun(file_path, chat_id)
+                
 
     def _send_video(self, file_path: str, chat_id: int) -> None:
         width, height = get_video_resolution(file_path)
@@ -740,7 +771,7 @@ class Controller:
             notification_settings["mute_for"] = 2147483647
         self.tg.set_chat_nottification_settings(chat_id, notification_settings)
         self.render()
-
+    
     @bind(chat_handler, ["p"])
     def toggle_pin(self) -> None:
         chat = self.model.chats.chats[self.model.current_chat]
@@ -873,10 +904,11 @@ class Controller:
             return
 
         # notify
-        if self.model.is_me(msg["sender"].get("user_id")):
+        if self.model.is_me(msg["sender_id"].get("user_id")):
             return
-        user = self.model.users.get_user(msg.sender_id)
+        user = self.model.users.get_user(msg.sender_id)                  
         name = f"{user['first_name']} {user['last_name']}"
+        
 
         if text := msg.text_content if msg.is_text else msg.content_type:
             notify(text, title=name)
