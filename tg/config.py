@@ -80,6 +80,8 @@ FILE_PICKER_CMD = "ranger --choosefile={file_path}"
 
 DOWNLOAD_DIR = os.path.expanduser("~/Downloads/")
 
+SCREEN_SHORT_DIR = os.path.expanduser("~/Screenshot/")
+
 if os.path.isfile(CONFIG_FILE):
     config_params = runpy.run_path(CONFIG_FILE)  # type: ignore
     for param, value in config_params.items():

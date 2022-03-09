@@ -6,9 +6,13 @@ Telegram terminal client.
 
 ![tg screenshot](tg-screenshot.png)
 
+## Change log
+- 20220309 
+    + update code fit tdlib 1.8.1 
+    + add `ss` shortcut in msg screen to send last image in screenshot folder
 
 ## Features
-
+- Support Apple M1
 - [X] view mediafiles: photo, video, voice/video notes, documents
 - [X] ability to send pictures, documents, audio, video
 - [X] reply, edit, forward, delete, send messages
@@ -30,7 +34,7 @@ Telegram terminal client.
 To use tg, you'll need to have the following installed:
 
 - [Python >= 3.8](https://www.python.org/downloads/)
-
+- tdlib 1.8.1
 
 ## Optional dependencies
 
@@ -73,7 +77,7 @@ brew install tg
 This option is recommended for development:
 
 ```sh
-git clone https://github.com/paul-nameless/tg.git
+git clone https://github.com/faithhw/tg.git
 cd tg
 pip install python-telegram
 pip install .
@@ -199,6 +203,8 @@ FILE_PICKER_CMD = "ranger --choosefile={file_path}"
 MAILCAP_FILE = os.path.expanduser("~/.config/mailcap")
 
 DOWNLOAD_DIR = os.path.expanduser("~/Downloads/")  # copy file to this dir
+
+SCREEN_SHORT_DIR = os.path.expanduser("~/Screenshot/") # default screen shot folder
 ```
 
 ### Mailcap file
@@ -246,6 +252,7 @@ For navigation arrow keys also can be used.
 - `ns`: create new secret chat
 - `/`: search in chats
 - `?`: show help
+- `ss`: send last image in screen shot folder
 
 ## Msgs:
 
