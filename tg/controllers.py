@@ -428,7 +428,7 @@ class Controller:
         chat_id = self.model.chats.id_by_index(self.model.current_chat)
 
         list_of_files = glob.glob(config.SCREEN_SHORT_DIR + "*.*")
-        file_path = max(list_of_files, key=os.path.getctime)
+        file_path = max(list_of_files, key=os.path.getmtime)
         self.present_info("Send last screenshot" + file_path)
         mime_map = {
             "animation": self.tg.send_animation,
