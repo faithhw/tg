@@ -95,7 +95,7 @@ class Model:
         return self.set_current_chat(idx)
 
     def set_current_chat(self, chat_idx: int) -> bool:
-        if 0 < chat_idx < len(self.chats.chats):
+        if 0 <= chat_idx < len(self.chats.chats):
             self.current_chat = chat_idx
             return True
         return False
